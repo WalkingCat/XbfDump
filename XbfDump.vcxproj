@@ -95,6 +95,7 @@
     <ClCompile Include="XbfDump.cpp" />
     <ClCompile Include="xbf_dumper.cpp" />
     <ClCompile Include="xbf_parser.cpp" />
+    <ClCompile Include="xbf_parser_v1.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

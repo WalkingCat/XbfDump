@@ -13,8 +13,15 @@ private:
 public:
 	xbf_parser(easy_file&& file);
 
-	bool parse();
-	bool read_nodes();
+	enum parse_result {
+		result_none = 0x00,
+		result_header = 0x01,
+		result_metadata = 0x02,
+		result_nodes = 0x04,
+		result_all = 0x07,
+	};
+	parse_result parse(std::string& error);
+	bool read_nodes_v1();
 
 	const xbf_data& get_data() { return m_data; }
 };

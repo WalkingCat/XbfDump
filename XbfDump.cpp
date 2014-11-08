@@ -77,14 +77,34 @@ int wmain(int argc, wchar_t* argv[])
 	easy_file file(xbffile, L"rb");
 	if (file.valid()) {
 		xbf_parser parser(std::move(file));
-		if (parser.parse()) {
-			xbf_dumper dumper(parser.get_data());
+		std::string error;
+		auto result = parser.parse(error);
 
-            if (options & dumpHeader)   dumper.dump_header();
-            if (options & dumpTables)   dumper.dump_tables();
-            if (options & dumpNodes)    dumper.dump_nodes();
-            if (options & dumpXaml)     dumper.dump_xaml();
-		} else printf_s(" parsing error\n");
+		xbf_dumper dumper(parser.get_data());
+		
+		if (options & dumpHeader) {
+			if (result & xbf_parser::result_header)
+				dumper.dump_header();
+			else printf_s("\nheader parsing failed\n");
+		}
+		if (options & dumpTables) {
+			if (result & xbf_parser::result_metadata)
+				dumper.dump_tables();
+			else printf_s("\nmetadata tables parsing failed\n");
+		}
+		if (options & dumpNodes) {
+			if (result & xbf_parser::result_nodes)
+				dumper.dump_nodes();
+			else printf_s("\nnode stream parsing failed\n");
+		}
+		if (options & dumpXaml) {
+			if (result != xbf_parser::result_all)
+				dumper.dump_xaml();
+			else printf_s("\nxbf parsing failed\n");
+		}
+
+		if (result != xbf_parser::result_all)
+			printf_s("\nXBF parsing error: %s\n", error.c_str());
 	}
 
 	return 0;

@@ -8,6 +8,7 @@ xbf_dumper::xbf_dumper(const xbf_data& data) : m_data(data) {}
 void xbf_dumper::dump_header()
 {
 	auto& header = m_data.header;
+	printf_s("XBF file header:\n");
 	printf_s("\tmagic: %08x %s\n", header.magicNumber, &header.magicNumber);
 	printf_s("\tmetadataSize: %u\n", header.metadataSize);
 	printf_s("\tnodeSize: %u\n", header.nodeSize);

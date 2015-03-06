@@ -98,13 +98,15 @@ int wmain(int argc, wchar_t* argv[])
 			else printf_s("\nnode stream parsing failed\n");
 		}
 		if (options & dumpXaml) {
-			if (result != xbf_parser::result_all)
+			if (result == xbf_parser::result_all)
 				dumper.dump_xaml();
 			else printf_s("\nxbf parsing failed\n");
 		}
 
 		if (result != xbf_parser::result_all)
 			printf_s("\nXBF parsing error: %s\n", error.c_str());
+	} else {
+		printf_s("\nFile open error.\n");
 	}
 
 	return 0;

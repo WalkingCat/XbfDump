@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "xbf_parser.h"
 
+using namespace std;
+
 xbf_parser::xbf_parser(easy_file&& file) : m_file(std::move(file)) {}
 
 bool xbf_parser::read_string(std::wstring* s)
@@ -43,6 +45,8 @@ xbf_parser::parse_result xbf_parser::parse(std::string& error)
 		}
 	}
 
+	const bool is_xbf_2_1 = (m_data.header.majorFileVersion == 2) && (m_data.header.minorFileVersion == 1);
+
 	uint32_t count = 0;
 	
 	if (status) status = m_file.read(&count);
@@ -50,6 +54,7 @@ xbf_parser::parse_result xbf_parser::parse(std::string& error)
 		m_data.strings.resize(count);
 		for (uint32_t i = 0; i < count; i++) {
 			if (!(status = read_string(&m_data.strings[i]))) break;
+			if (is_xbf_2_1) m_file.skip(2); // trailing zero ?
 		}
 	}
 
@@ -91,7 +96,9 @@ xbf_parser::parse_result xbf_parser::parse(std::string& error)
 			if (status)
 				ret = (parse_result)(ret | result_nodes);
 			else error = "node stream parsing failed";
-		} else error = "file version not supported";
+		} else {
+			error = string("file version not supported: ") + to_string(m_data.header.majorFileVersion) + "." + to_string(m_data.header.minorFileVersion);
+		}
 	}
 
 	return ret;
